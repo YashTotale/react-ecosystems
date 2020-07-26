@@ -7,9 +7,10 @@ A Mini Project to learn about tools in the React Ecosystem that make it easier t
 ### Setup
 
 - `npm init -y`
+- `npm i react react-dom`
+- `npm i --save-dev react-hot-loader @babel/core @babel/cli @babel/preset-env @babel/preset-react webpack webpack-cli webpack-dev-server babel-loader`
 - create folders: "public" and "src"
-- create file "index.html" in public
-- paste
+- In index.html (in public) paste
   ```
   <!DOCTYPE html>
   <html lang="en">
@@ -25,21 +26,20 @@ A Mini Project to learn about tools in the React Ecosystem that make it easier t
   </body>
   </html>
   ```
-- `npm i --save-dev @babel/core @babel/cli @babel/preset-env @babel/preset-react`
-- create `.babelrc` file and paste 
+- In .babelrc paste 
   ```
   {
     "presets": ["@babel/preset-env", "@babel/preset-react"]
   }
   ```
-- `npm i react react-dom`
 - In App.js paste
   ```
   import React from "react";
+  import { hot } from "react-hot-loader";
   const App = () => {
     return <div>Hello World</div>;
   };
-  export default App;
+  export default hot(module)(App);
   ```
 - In index.js paste
   ```
@@ -48,7 +48,6 @@ A Mini Project to learn about tools in the React Ecosystem that make it easier t
   import App from "./App";
   ReactDOM.render(<App />, document.getElementById("root"));
   ```
-- `npm i --save-dev webpack webpack-cli webpack-dev-server babel-loader`
 - In webpack.config.js paste
   ```
   const path = require("path");
@@ -84,29 +83,43 @@ A Mini Project to learn about tools in the React Ecosystem that make it easier t
     plugins: [new webpack.HotModuleReplacementPlugin()],
   };
   ```
-- `npm i --save-dev react-hot-loader`
-- Change App.js to 
-  ```
-  import React from "react";
-  import { hot } from "react-hot-loader";
-  const App = () => {
-    return <div>Hello World</div>;
-  };
-  export default hot(module)(App);
-  ```
 - Add script `"dev": "npx webpack-dev-server --mode development"` to package.json
 
 ## Redux
 
 ### Setup
 
-- `npm i redux react-redux`
+- `npm i redux react-redux redux-persist redux-thunk redux-devtools-extension @babel/runtime`
+- `npm i --save-dev @babel/plugin-transform-runtime`
+- Change .babelrc to
+  ```
+  {
+    "presets": ["@babel/preset-env", "@babel/preset-react"],
+    "plugins": ["@babel/plugin-transform-runtime"]
+  }
+  ```
 - In store.js paste
   ```
-  import { createStore, combineReducers } from "redux";
+  import { createStore, combineReducers, applyMiddleware } from "redux";
+  import { persistReducer } from "redux-persist";
+  import storage from "redux-persist/lib/storage";
+  import autoMergeLevel2 from "redux-persist/lib/stateReconciler/autoMergeLevel2";
+  import thunk from "redux-thunk";
+  import { composeWithDevTools } from "redux-devtools-extension";
+
   const reducers = {};
+
+  const persistConfig = {
+    key: "root",
+    storage,
+    stateReconciler: autoMergeLevel2,
+  };
+
   const rootReducer = combineReducers(reducers);
-  export const configureStore = () => createStore(rootReducer);
+  const persistedReducer = persistReducer(persistConfig, rootReducer);
+
+  export const configureStore = () =>
+    createStore(persistedReducer, composeWithDevTools(applyMiddleware(thunk)));
   ```
 - Change index.js to
   ```
@@ -118,16 +131,22 @@ A Mini Project to learn about tools in the React Ecosystem that make it easier t
   // Redux Imports
   import { Provider } from "react-redux";
   import { configureStore } from "./store";
+  import { persistStore } from "redux-persist";
+  import { PersistGate } from "redux-persist/lib/integration/react";
+
+  const store = configureStore();
+  const persistor = persistStore(store);
 
   ReactDOM.render(
-    <Provider store={configureStore()}>
-      <App />
+    <Provider store={store}>
+      <PersistGate loading={<div>Loading...</div>} persistor={persistor}>
+        <App />
+      </PersistGate>
     </Provider>,
     document.getElementById("root")
   );
   ```
-
-## Redux Thunk
+- Add actions, reducers, thunks, selectors folders with index.js in each
 
 ## Selectors
 
