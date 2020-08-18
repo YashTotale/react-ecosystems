@@ -2,6 +2,8 @@
 
 A Mini Project to learn about tools in the React Ecosystem that make it easier to create large and organized React Applications.
 
+**The following sections detail the steps it would take to recreate this template.**
+
 ## React
 
 ### Setup
