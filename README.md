@@ -1,8 +1,6 @@
 # React Ecosystems
 
-A Mini Project to learn about tools in the React Ecosystem that make it easier to create large and organized React Applications.
-
-**The following sections detail the steps it would take to recreate this template.**
+A mini project to learn about tools in the React Ecosystem that make it easier to create large and organized React Applications.
 
 ## React
 
@@ -149,9 +147,3 @@ A Mini Project to learn about tools in the React Ecosystem that make it easier t
   );
   ```
 - Add actions, reducers, thunks, selectors folders with index.js in each
-
-## Selectors
-
-## Styled Components
-
-## Testing (Mocha + Chai)
